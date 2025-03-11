@@ -23,7 +23,12 @@ interface UseDragResult {
   handleMouseDown: (
     e: React.MouseEvent,
     task: GanttTask,
-    dragType: DragType
+    dragType: DragType,
+    initialProps: {
+      left: number;
+      width: number;
+      progress: number;
+    }
   ) => void;
   handleMouseMove: (e: React.MouseEvent) => void;
   handleMouseUp: () => void;
@@ -59,24 +64,27 @@ export const useGanttDrag = (
   }, []);
 
   const handleMouseDown = useCallback(
-    (e: React.MouseEvent, task: GanttTask, dragType: DragType) => {
+    (
+      e: React.MouseEvent,
+      task: GanttTask,
+      dragType: DragType,
+      initialProps: { left: number; width: number; progress: number }
+    ) => {
       e.preventDefault();
       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       const initialLeft = rect.left - listWidth;
-      console.log("taskPosition", rect);
       setDragState({
         isDragging: true,
         dragType,
         taskId: task.id,
         initialX: e.clientX,
-        initialWidth: rect.width,
-        initialLeft,
-        initialProgress: task.progress || 0,
+        initialWidth: initialProps.width,
+        initialLeft: initialProps.left,
+        initialProgress: initialProps.progress,
         //currentLeft: initialLeft,
         //currentWidth: rect.width,
         //currentProgress: task.progress || 0,
       });
-
       taskRef.current = task;
 
       document.addEventListener("mousemove", handleGlobalMouseMove);
@@ -84,7 +92,6 @@ export const useGanttDrag = (
     },
     []
   );
-
   const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
     const event = { clientX: e.clientX } as React.MouseEvent;
     handleMouseMove(event);
@@ -132,6 +139,7 @@ export const useGanttDrag = (
         }
         case "left": {
           const newLeft = Math.max(0, dragState.initialLeft + deltaX);
+          console.log("newLeft", newLeft, deltaX, dragState.initialWidth);
           const newStartDate = getDateFromX(
             newLeft + listWidth,
             timelineConfig,
@@ -141,6 +149,9 @@ export const useGanttDrag = (
           setDragState((prev) => ({
             ...prev,
             currentLeft: newLeft,
+            currentWidth: prev.currentWidth
+              ? prev.initialWidth + Math.abs(deltaX)
+              : Math.abs(deltaX),
           }));
 
           if (newStartDate < task.endDate) {
