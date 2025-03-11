@@ -25,7 +25,12 @@ interface TaskBarProps {
   onMouseDown: (
     e: React.MouseEvent,
     task: GanttTask,
-    type: "bar" | "left" | "right" | "progress"
+    type: "bar" | "left" | "right" | "progress",
+    initialProps: {
+      left: number;
+      width: number;
+      progress: number;
+    }
   ) => void;
 }
 
@@ -249,7 +254,13 @@ export const TaskBar: React.FC<TaskBarProps> = ({
         opacity: isDragging ? 0.8 : 1,
         zIndex: isDragging ? 100 : 1,
       }}
-      onMouseDown={(e) => onMouseDown(e, task, "bar")}
+      onMouseDown={(e) =>
+        onMouseDown(e, task, "bar", {
+          left,
+          width,
+          progress: task.progress || 0,
+        })
+      }
     >
       {/* Progress bar */}
       <div
@@ -280,7 +291,7 @@ export const TaskBar: React.FC<TaskBarProps> = ({
         }}
         onMouseDown={(e) => {
           e.stopPropagation();
-          onMouseDown(e, task, "progress");
+          onMouseDown(e, task, "progress", {left: progressWidth - 4, width: 8, progress: task.progress || 0});
         }}
       /> */}
 
@@ -298,7 +309,11 @@ export const TaskBar: React.FC<TaskBarProps> = ({
         }}
         onMouseDown={(e) => {
           e.stopPropagation();
-          onMouseDown(e, task, "left");
+          onMouseDown(e, task, "left", {
+            left: left,
+            width: width,
+            progress: task.progress || 0,
+          });
         }}
       />
 
@@ -316,7 +331,11 @@ export const TaskBar: React.FC<TaskBarProps> = ({
         }}
         onMouseDown={(e) => {
           e.stopPropagation();
-          onMouseDown(e, task, "right");
+          onMouseDown(e, task, "right", {
+            left: left,
+            width: width,
+            progress: task.progress || 0,
+          });
         }}
       />
 

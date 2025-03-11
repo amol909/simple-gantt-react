@@ -22,7 +22,12 @@ interface TaskBarsProps {
   onMouseDown: (
     e: React.MouseEvent,
     task: GanttTask,
-    type: "bar" | "left" | "right" | "progress"
+    type: "bar" | "left" | "right" | "progress",
+    initialProps: {
+      left: number;
+      width: number;
+      progress: number;
+    }
   ) => void;
 }
 
@@ -34,9 +39,9 @@ export const TaskBars: React.FC<TaskBarsProps> = ({
   barCornerRadius,
   listWidth,
   selectedTaskId,
+  viewMode,
   dragState,
   onMouseDown,
-  viewMode,
 }) => {
   return (
     <div className="gantt-task-bars">
@@ -59,7 +64,7 @@ export const TaskBars: React.FC<TaskBarsProps> = ({
             barHeight={barHeight}
             barCornerRadius={barCornerRadius}
             listWidth={listWidth}
-            isSelected={selectedTaskId === task.id}
+            isSelected={task.id === selectedTaskId}
             dragState={dragState}
             onMouseDown={onMouseDown}
             viewMode={viewMode}

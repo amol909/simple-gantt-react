@@ -100,7 +100,7 @@ export const getTimelineConfig = (
       columnWidth = 120;
       break;
     case "month":
-      columnUnit = "day";
+      columnUnit = "week";
       columnWidth = 100;
       break;
     case "year":
@@ -170,7 +170,7 @@ export const getFormattedDate = (
     case "week":
       return format(date, "EEEEEE dd");
     case "month":
-      return format(date, "EEEEEE dd");
+      return format(date, "MMM");
     case "year":
       return format(date, "qqq MMM");
     case "custom":
