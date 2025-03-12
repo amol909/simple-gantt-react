@@ -1,54 +1,41 @@
-# React + TypeScript + Vite
+Components 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Gantt - The main entry for the Gantt chart. This component will have various config props like tasks, Gantt event handlers like click, drag etc., styles and more.  
 
-Currently, two official plugins are available:
+ViewSwitcher – The view mode switcher dropdown to select different view modes like day, weekly, monthly and custom time range 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+TaskList – The task list that will be present on the left side of the actual gantt chart 
 
-## Expanding the ESLint configuration
+Timeline – The timeline component that will render both the labels and the dates (2 rows) 
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+TaskBars – The actual task bars 
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+TaskBar – The individual task bar that will make up a individual task in gantt. The component is also responsible for rendering the icons like attachments, issue etc for a particular task 
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+ 
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Hooks 
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+useGanttState – Has gantt state and gantt actions.  
+
+Gantt State: Will hold state for the following - tasks, viewMode,    timelineConfig,   listWidth,    selectedTaskId,   customTimeRange, 
+
+Gantt Actions: actions for the above mentioned states. 
+
+useGanttResponsive - Manages container width and height along with resize events 
+
+useGanttDrag – all mouse events to handle drag for tasks and gantt 
+
+ 
+
+ 
+
+Functions 
+
+getFormattedDate will return the date format rendered on the timeline header based on the view mode.  
+
+getHeaderFormattedDate will return the timeline header for month/year part. 
+
+getXFromDate will help calculate the left position from the date provided 
+
+The DateUtils file has all the column size, view mode and column unit configuration that can be changed according to requirements 
