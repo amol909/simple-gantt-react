@@ -1,3 +1,5 @@
+## Simple Gantt Component
+
 ### Components 
 
 **Gantt** - The main entry for the Gantt chart. This component will have various config props like tasks, Gantt event handlers like click, drag etc., styles and more.  
