@@ -42,8 +42,6 @@ export const Timeline: React.FC<TimelineProps> = ({
     let currentDate = new Date(startDate);
     let prevHeaderDate = null;
     let headerCells = [];
-    let prevFormattedDate = null;
-    let labelGroup = { start: 0, text: "", count: 0 };
 
     for (let i = 0; i < columnCount; i++) {
       // Determine the current date for this column
@@ -69,67 +67,6 @@ export const Timeline: React.FC<TimelineProps> = ({
       }
       // Format the date for the column
       const formattedDate = getFormattedDate(date, viewMode, columnUnit);
-
-      // Group similar labels
-      if (formattedDate !== prevFormattedDate) {
-        if (labelGroup.count > 0) {
-          // Create label for previous group
-          cells.push(
-            <div
-              key={`label-group-${labelGroup.start}`}
-              className="gantt-timeline-column-label text-xs"
-              style={{
-                position: "absolute",
-                left: labelGroup.start * columnWidth,
-                width: labelGroup.count * columnWidth,
-                height: headerHeight / 2,
-                textAlign: "center",
-                borderRight: "1px solid #e0e0e0",
-                borderBottom: "1px solid #e0e0e0",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                top: headerHeight / 2,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "5px",
-                backgroundColor: isToday(date) ? todayColor : "transparent",
-                color: "black",
-              }}
-            >
-              {labelGroup.text}
-            </div>
-          );
-        }
-        // Start new group
-        labelGroup = { start: i, text: formattedDate, count: 1 };
-      } else {
-        labelGroup.count++;
-      }
-      prevFormattedDate = formattedDate;
-
-      // Create the column cell (background)
-      cells.push(
-        <div
-          key={`col-${i}`}
-          className="gantt-timeline-column"
-          style={{
-            position: "absolute",
-            left: i * columnWidth,
-            width: columnWidth,
-            height: height,
-            borderRight: "1px solid #e0e0e0",
-            // backgroundColor:
-            //   showWeekends && isWeekend(date) ? weekendColor : "transparent",
-            // ...(showToday && isToday(date)
-            //   ? { backgroundColor: todayColor }
-            //   : {}),
-          }}
-        />
-      );
-
       // Check if we need a new header cell
       const headerDate = getHeaderFormattedDate(date, viewMode);
       if (headerDate !== prevHeaderDate) {
@@ -145,19 +82,35 @@ export const Timeline: React.FC<TimelineProps> = ({
         headerCells[headerCells.length - 1].endIndex = i;
       }
 
-      currentDate = date;
-    }
-
-    // Don't forget to add the last label group
-    if (labelGroup.count > 0) {
+      // Create the column cell
       cells.push(
         <div
-          key={`label-group-${labelGroup.start}`}
+          key={`col-${i}`}
+          className="gantt-timeline-column"
+          style={{
+            position: "absolute",
+            left: i * columnWidth,
+            width: columnWidth,
+            height: height,
+            borderRight: "1px solid #e0e0e0",
+            backgroundColor:
+              showWeekends && isWeekend(date) ? weekendColor : "transparent",
+            ...(showToday && isToday(date)
+              ? { backgroundColor: todayColor }
+              : {}),
+          }}
+        />
+      );
+
+      // Create the column label
+      cells.push(
+        <div
+          key={`label-${i}`}
           className="gantt-timeline-column-label text-xs"
           style={{
             position: "absolute",
-            left: labelGroup.start * columnWidth,
-            width: labelGroup.count * columnWidth,
+            left: i * columnWidth,
+            width: columnWidth,
             height: headerHeight / 2,
             textAlign: "center",
             borderRight: "1px solid #e0e0e0",
@@ -171,13 +124,16 @@ export const Timeline: React.FC<TimelineProps> = ({
             justifyContent: "center",
             alignItems: "center",
             borderRadius: "5px",
-            backgroundColor: isToday(currentDate) ? todayColor : "transparent",
+            backgroundColor: isToday(date) ? todayColor : "transparent",
             color: "black",
+            //  wordSpacing: viewMode !== "day" ? columnWidth / 2 : 0,
           }}
         >
-          {labelGroup.text}
+          {formattedDate}
         </div>
       );
+
+      currentDate = date;
     }
 
     // Render header cells (month/year labels)
